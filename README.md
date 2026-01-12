@@ -126,9 +126,11 @@ HMR Latency vs Project Size
 
 ### Prerequisites
 
-- Node.js 18+ 
-- macOS with Apple Silicon (M1/M2/M3)
-- Next.js 14
+- Next.js: 14.2.35
+- NodeJS: 20.19.6
+- MacOS: Sequoia 15.6
+- Chip: Apple M1
+- Memory: 8 GB
 
 ### Running the Benchmark
 
