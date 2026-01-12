@@ -212,27 +212,7 @@ Based on observed data, we can project performance at larger scales:
 
 *\* Projected values based on observed scaling patterns*
 
-```
-HMR Latency vs Project Size
-═══════════════════════════════════════════════════════════════
-
-     │                                          ╱ Webpack
- 500 │                                       ╱    (Linear)
-     │                                    ╱
- 400 │                                 ╱
-     │                              ╱
- 300 │                           ╱
-     │                        ╱
- 200 │─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ╱─ ─ ← Medium: 205ms
-     │              ╱ ╱
- 100 │        ╱ ╱
-     │   ╱ ╱
-  25 │──●────────●────────●────────●───── Turbopack (Constant)
-     │
-   0 └────────────────────────────────────────────────────────▶
-          Small      Medium      Large      Enterprise
-                      Project Size
-```
+![HMR Latency Comparison](./results/charts/chart1_hmr_comparison.png)
 
 ---
 

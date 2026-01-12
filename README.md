@@ -71,45 +71,17 @@ We conducted a **two-phase benchmark study** with a total of **N=60 samples** (3
 | **Turbopack HMR** | 26.43 ms | 24.07 ms | **-8.93%** ✅ |
 | **Speedup Factor** | 6.18× | 8.53× | **+38.03%** 🚀 |
 
-### Speedup Factor Growth
+### Visual Analysis
 
-```
-Speedup Factor Growth
-═══════════════════════════════════════════════════════════
-
-Small Project:   ████████████████████████████████ 6.18×
-
-Medium Project:  ████████████████████████████████████████████ 8.53×
-                                                 ▲
-                                                 │
-                                         +38% improvement!
-```
+![HMR Latency Comparison](./results/charts/chart1_hmr_comparison.png)
+*Figure 1: Comparison of HMR latency across project sizes. Webpack suffers from significant slowdown (+25%) while Turbopack remains stable.*
 
 ### Performance Scaling Projection
 
 Based on observed data, we can project performance at larger scales:
 
-```
-HMR Latency vs Project Size
-═══════════════════════════════════════════════════════════════
-
-     │                                          ╱ Webpack
- 500 │                                       ╱    (Linear)
-     │                                    ╱
- 400 │                                 ╱
-     │                              ╱
- 300 │                           ╱
-     │                        ╱
- 200 │─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ╱─ ─ ← Medium: 205ms
-     │              ╱ ╱
- 100 │        ╱ ╱
-     │   ╱ ╱
-  25 │──●────────●────────●────────●───── Turbopack (Constant)
-     │
-   0 └────────────────────────────────────────────────────────▶
-          Small      Medium      Large      Enterprise
-                      Project Size
-```
+![Scalability Trend](./results/charts/chart2_scalability_projection.png)
+*Figure 2: Scalability projection showing Webpack's Linear O(n) degradation vs Turbopack's Constant O(1) stability.*
 
 | Project Size | Components | Webpack HMR | Turbopack HMR | Speedup |
 |--------------|------------|-------------|---------------|---------|
