@@ -1,101 +1,115 @@
-import Image from "next/image";
+
+import React from 'react';
+import Image from "next/image"; 
+import HeavyComponent1 from './components/HeavyComponent1';
+import HeavyComponent2 from './components/HeavyComponent2';
+import HeavyComponent3 from './components/HeavyComponent3';
+import HeavyComponent4 from './components/HeavyComponent4';
+import HeavyComponent5 from './components/HeavyComponent5';
+import HeavyComponent6 from './components/HeavyComponent6';
+import HeavyComponent7 from './components/HeavyComponent7';
+import HeavyComponent8 from './components/HeavyComponent8';
+import HeavyComponent9 from './components/HeavyComponent9';
+import HeavyComponent10 from './components/HeavyComponent10';
+import HeavyComponent11 from './components/HeavyComponent11';
+import HeavyComponent12 from './components/HeavyComponent12';
+import HeavyComponent13 from './components/HeavyComponent13';
+import HeavyComponent14 from './components/HeavyComponent14';
+import HeavyComponent15 from './components/HeavyComponent15';
+import HeavyComponent16 from './components/HeavyComponent16';
+import HeavyComponent17 from './components/HeavyComponent17';
+import HeavyComponent18 from './components/HeavyComponent18';
+import HeavyComponent19 from './components/HeavyComponent19';
+import HeavyComponent20 from './components/HeavyComponent20';
+import HeavyComponent21 from './components/HeavyComponent21';
+import HeavyComponent22 from './components/HeavyComponent22';
+import HeavyComponent23 from './components/HeavyComponent23';
+import HeavyComponent24 from './components/HeavyComponent24';
+import HeavyComponent25 from './components/HeavyComponent25';
+import HeavyComponent26 from './components/HeavyComponent26';
+import HeavyComponent27 from './components/HeavyComponent27';
+import HeavyComponent28 from './components/HeavyComponent28';
+import HeavyComponent29 from './components/HeavyComponent29';
+import HeavyComponent30 from './components/HeavyComponent30';
+import HeavyComponent31 from './components/HeavyComponent31';
+import HeavyComponent32 from './components/HeavyComponent32';
+import HeavyComponent33 from './components/HeavyComponent33';
+import HeavyComponent34 from './components/HeavyComponent34';
+import HeavyComponent35 from './components/HeavyComponent35';
+import HeavyComponent36 from './components/HeavyComponent36';
+import HeavyComponent37 from './components/HeavyComponent37';
+import HeavyComponent38 from './components/HeavyComponent38';
+import HeavyComponent39 from './components/HeavyComponent39';
+import HeavyComponent40 from './components/HeavyComponent40';
+import HeavyComponent41 from './components/HeavyComponent41';
+import HeavyComponent42 from './components/HeavyComponent42';
+import HeavyComponent43 from './components/HeavyComponent43';
+import HeavyComponent44 from './components/HeavyComponent44';
+import HeavyComponent45 from './components/HeavyComponent45';
+import HeavyComponent46 from './components/HeavyComponent46';
+import HeavyComponent47 from './components/HeavyComponent47';
+import HeavyComponent48 from './components/HeavyComponent48';
+import HeavyComponent49 from './components/HeavyComponent49';
+import HeavyComponent50 from './components/HeavyComponent50';
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <main className="flex min-h-screen flex-col items-center p-12">
+      <h1 className="text-2xl font-bold mb-8">Scalability Test: 50 Heavy Components</h1>
+      <p className="mb-8">This page simulates a medium-scale application structure.</p>
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-6xl">
+        <div className="w-full"><HeavyComponent1 /></div>
+<div className="w-full"><HeavyComponent2 /></div>
+<div className="w-full"><HeavyComponent3 /></div>
+<div className="w-full"><HeavyComponent4 /></div>
+<div className="w-full"><HeavyComponent5 /></div>
+<div className="w-full"><HeavyComponent6 /></div>
+<div className="w-full"><HeavyComponent7 /></div>
+<div className="w-full"><HeavyComponent8 /></div>
+<div className="w-full"><HeavyComponent9 /></div>
+<div className="w-full"><HeavyComponent10 /></div>
+<div className="w-full"><HeavyComponent11 /></div>
+<div className="w-full"><HeavyComponent12 /></div>
+<div className="w-full"><HeavyComponent13 /></div>
+<div className="w-full"><HeavyComponent14 /></div>
+<div className="w-full"><HeavyComponent15 /></div>
+<div className="w-full"><HeavyComponent16 /></div>
+<div className="w-full"><HeavyComponent17 /></div>
+<div className="w-full"><HeavyComponent18 /></div>
+<div className="w-full"><HeavyComponent19 /></div>
+<div className="w-full"><HeavyComponent20 /></div>
+<div className="w-full"><HeavyComponent21 /></div>
+<div className="w-full"><HeavyComponent22 /></div>
+<div className="w-full"><HeavyComponent23 /></div>
+<div className="w-full"><HeavyComponent24 /></div>
+<div className="w-full"><HeavyComponent25 /></div>
+<div className="w-full"><HeavyComponent26 /></div>
+<div className="w-full"><HeavyComponent27 /></div>
+<div className="w-full"><HeavyComponent28 /></div>
+<div className="w-full"><HeavyComponent29 /></div>
+<div className="w-full"><HeavyComponent30 /></div>
+<div className="w-full"><HeavyComponent31 /></div>
+<div className="w-full"><HeavyComponent32 /></div>
+<div className="w-full"><HeavyComponent33 /></div>
+<div className="w-full"><HeavyComponent34 /></div>
+<div className="w-full"><HeavyComponent35 /></div>
+<div className="w-full"><HeavyComponent36 /></div>
+<div className="w-full"><HeavyComponent37 /></div>
+<div className="w-full"><HeavyComponent38 /></div>
+<div className="w-full"><HeavyComponent39 /></div>
+<div className="w-full"><HeavyComponent40 /></div>
+<div className="w-full"><HeavyComponent41 /></div>
+<div className="w-full"><HeavyComponent42 /></div>
+<div className="w-full"><HeavyComponent43 /></div>
+<div className="w-full"><HeavyComponent44 /></div>
+<div className="w-full"><HeavyComponent45 /></div>
+<div className="w-full"><HeavyComponent46 /></div>
+<div className="w-full"><HeavyComponent47 /></div>
+<div className="w-full"><HeavyComponent48 /></div>
+<div className="w-full"><HeavyComponent49 /></div>
+<div className="w-full"><HeavyComponent50 /></div>
+      </div>
+    </main>
   );
 }
