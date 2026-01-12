@@ -3,7 +3,7 @@
 **Document Version:** 1.0  
 **Date:** January 13, 2026  
 **Platform:** Apple Silicon (macOS)  
-**Framework:** Next.js v14
+**Framework:** Next.js  
 **Sample Size:** N=30 runs per toolchain
 
 ---
