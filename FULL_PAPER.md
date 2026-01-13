@@ -1,20 +1,40 @@
 # Performance Analysis of Next.js Development Toolchains on Apple Silicon (ARM64)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Author:** Muhammad Yusuf Saputra  
 **Affiliation:** Department of Informatics Engineering, STITEK Bontang  
 **Location:** Bontang, Indonesia  
-**Date:** January 13, 2026  
+**Document Version:** 2.1  
+**Date:** January 14, 2026  
 
 ---
 
 ## Abstract
 
-This document presents an exploratory benchmark study comparing the development-time performance characteristics of two Next.js toolchains: Legacy Webpack and Turbopack. Using a controlled experimental setup with N=60 total samples across two synthetic project complexity levels, the study measures cold start time and Hot Module Replacement (HMR) latency as primary indicators of developer-facing performance.
+This document presents an exploratory benchmark study comparing the development-time performance characteristics of two Next.js toolchains: the legacy Webpack bundler and the newer Turbopack bundler. Using a controlled experimental setup with N=60 total samples across two synthetic project complexity levels, the study measures cold start time and Hot Module Replacement (HMR) latency as primary indicators of developer-facing performance.
 
-The results indicate that, within the tested configuration, Turbopack exhibits substantially lower HMR latency in the baseline project (approximately 6× faster) and maintains relatively stable HMR response as project complexity increases, while the Webpack-based toolchain shows increased latency under the same conditions. These findings are specific to the tested environment, framework version, and project structure, and are not intended as general performance claims.
+The results indicate that, within the tested configuration, Turbopack exhibits substantially lower HMR latency in the baseline project (approximately 6× faster) and maintains relatively stable HMR response as project complexity increases, while the Webpack-based toolchain shows increased latency under the same conditions. These findings are specific to the tested environment, framework version, and project structure and are not intended as general performance claims.
 
-This document is intended as a technical report accompanying a reproducible benchmark dataset, providing baseline empirical data to support future comparative studies and peer-reviewed analysis of Next.js development toolchains.
+This document serves as the primary data descriptor accompanying a reproducible benchmark dataset, providing baseline empirical data to support future comparative studies and peer-reviewed analysis of Next.js development toolchains.
 
 **Keywords:** Next.js, Turbopack, Webpack, Hot Module Replacement, Performance Benchmarking, Apple Silicon, Developer Experience
+
+---
+
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Methodology](#2-methodology)
+3. [Phase 1: Small Project Baseline](#3-phase-1-small-project-baseline)
+4. [Phase 2: Scalability Analysis](#4-phase-2-scalability-analysis)
+5. [Summary](#5-summary)
+6. [Dataset Structure](#6-dataset-structure)
+7. [License](#7-license)
+8. [References](#references)
+9. [Appendices](#appendix-a-raw-data-summary)
 
 ---
 
@@ -520,6 +540,23 @@ This section presents a **scalability analysis** comparing HMR (Hot Module Repla
 
 *Source: Experimental data from `results/medium_project_n30/`*
 
+#### 4.2.3 Data Completeness Note: Webpack Measurement Failures
+
+Two of the 30 scheduled Webpack HMR measurement runs (runs #7 and #23) failed to produce valid data due to the following edge cases:
+
+| Run | Failure Mode | Root Cause Analysis |
+|-----|--------------|---------------------|
+| #7 | HMR timeout (>30s) | The development server became unresponsive during file modification. Log analysis indicated a memory pressure event coinciding with macOS performing background indexing. The process was terminated after the 30-second timeout threshold. |
+| #23 | Regex pattern mismatch | The "Compiled" log message was not detected within the expected format. Upon manual inspection, the server output showed a compilation warning that altered the log format, causing the automated regex parser to miss the timing data. |
+
+**Handling Approach:**
+- Failed runs were excluded from statistical analysis rather than re-run to preserve temporal integrity of the dataset
+- No imputation or estimation was performed on missing values
+- The reduced sample size (N=28) remains sufficient for Central Limit Theorem applicability
+- This transparency is provided to support reproducibility and acknowledge measurement limitations
+
+> **Note:** These failures represent real-world edge cases that may occur during automated benchmarking. Their documentation contributes to the methodological transparency of this study and may inform future benchmark instrumentation design.
+
 ### 4.3 Scalability Analysis Table
 
 | Metric | Legacy (Small) | Legacy (Medium) | Δ Change | Turbo (Small) | Turbo (Medium) | Δ Change |
@@ -553,55 +590,85 @@ This section presents a **scalability analysis** comparing HMR (Hot Module Repla
 
 #### 4.4.3 Visual Representation
 
-![Scalability Projection](./results/charts/chart2_scalability_projection.png)
-*Figure 2: Scalability projection showing observed Webpack HMR latency increase vs. Turbopack HMR latency stability. Measured data points (solid) and projected values (dashed) illustrate the observed performance gap.*
+![HMR Scalability Comparison](./results/charts/chart2_scalability_projection.png)  
+*Figure 2: HMR scalability comparison showing measured Webpack latency increase (+25.7%) versus Turbopack stability (−8.9%) as project complexity increased.*
 
 ### 4.5 Scaling Behavior Observations
 
-#### 4.5.1 Time Complexity Characterization
+#### 4.5.1 Observed Scaling Patterns
 
 | Toolchain | Observed Scaling Pattern | Behavior Description |
 |-----------|--------------------------|----------------------|
-| **Webpack (Legacy)** | Linear-like | HMR time increased proportionally with module count in this test |
-| **Turbopack** | Constant-like | HMR time remained stable regardless of project size in this test |
+| **Webpack (Legacy)** | Linear-like growth | HMR time increased proportionally with module count in this test |
+| **Turbopack** | Sub-linear growth | HMR time remained relatively stable as project size increased in this test |
+
+> **Important Caveat:** These characterizations are based on only two data points (small and medium projects). Formal time complexity analysis ($O$ notation) requires more extensive data across multiple scales and is beyond the scope of this study. The terms "linear-like" and "sub-linear" describe observed trends, not proven algorithmic complexity.
 
 #### 4.5.2 Possible Explanations
 
-**Webpack's Observed Linear Scaling:**
+**Webpack's Observed Linear-like Scaling:**
 - Full dependency graph traversal may be required for each change
 - Single-threaded JavaScript execution may limit parallelization
 - Module resolution overhead may accumulate with graph size
 
-**Turbopack's Observed Constant-time Behavior:**
+**Turbopack's Observed Efficient Scaling Behavior:**
 - Incremental compilation architecture may limit work to changed modules
 - Parallel processing via Rust multi-threading may improve efficiency
 - Lazy evaluation may avoid unnecessary work on unchanged modules
 - Native Rust implementation may avoid JavaScript single-threaded limitations
 
+> **Note:** Without additional data points at larger scales, we cannot definitively characterize the algorithmic complexity of either toolchain. The observed stability in Turbopack's HMR latency suggests efficient scaling, but this should not be interpreted as proof of constant-time ($O(1)$) complexity.
+
 ### 4.6 Performance Scaling Projection
 
-Based on observed data, we project performance at larger scales. **These projections are extrapolations and should be treated as hypothetical estimates, not measured values.**
+---
 
-![Scalability Chart](./results/charts/chart2_scalability_projection.png)
+> ⚠️ **IMPORTANT: HYPOTHETICAL EXTRAPOLATION**
+>
+> **The content in this section (4.6) is NOT empirical data.** The following projections are speculative estimates based on extrapolating from only two measured data points. These values have **NOT been empirically measured** and are provided solely for illustrative purposes.
+>
+> **Do not cite projected values as benchmark results.**
 
-| Project Size | Components | Webpack HMR (Observed/Projected) | Turbopack HMR (Observed/Projected) | Projected Speedup |
-|--------------|------------|----------------------------------|------------------------------------|--------------------||
-| Small | ~10 | 163 ms | 26 ms | 6.18× |
-| Medium | 50 | 205 ms | 24 ms | 8.53× |
-| Large* | 200 | ~320 ms | ~25 ms | ~12.8× |
-| Enterprise* | 1000+ | ~700+ ms | ~25 ms | ~28×+ |
+---
 
-*\* Projected values based on observed scaling patterns. Actual results may vary.*
+Real-world performance at larger scales may differ significantly due to factors not captured in this study, including:
 
-> **Important Caveat:** These projections assume the observed scaling patterns continue at larger scales. Real-world performance depends on many factors not captured in this study, including actual component complexity, dependency patterns, available system resources, and toolchain optimizations.
+- Non-linear system resource constraints (memory limits, CPU throttling)
+- Toolchain-specific optimizations or bottlenecks at scale
+- Different dependency graph structures in real applications
+- Cache behavior changes at larger project sizes
+
+#### Measured vs. Projected Values
+
+| Project Size | Components | Webpack HMR | Turbopack HMR | Speedup | Data Type |
+|--------------|------------|-------------|---------------|---------|-----------|
+| Small | ~10 | 163 ms | 26 ms | 6.18× | ✅ **Measured** |
+| Medium | 50 | 205 ms | 24 ms | 8.53× | ✅ **Measured** |
+| Large | 200 | ~320 ms | ~25 ms | ~12.8× | ⚠️ **Hypothetical** |
+| Enterprise | 1000+ | ~700+ ms | ~25 ms | ~28×+ | ⚠️ **Hypothetical** |
+
+#### Critical Limitations of Extrapolation
+
+1. **Insufficient Data Points:** Only two measured data points (small, medium) were used for projection. Statistical best practices typically require 5+ data points for meaningful trend extrapolation.
+
+2. **Assumption of Linearity:** The Webpack projection assumes continued linear scaling, which may not hold at larger scales due to potential optimization thresholds or system constraints.
+
+3. **Assumption of Stability:** The Turbopack projection assumes continued sub-linear/stable behavior, which has not been validated at larger scales.
+
+4. **No Confidence Intervals:** Without additional data, confidence intervals cannot be calculated for projected values.
+
+> **Recommendation:** These projections should be used only as rough directional indicators. Organizations considering toolchain selection for large-scale projects should conduct their own benchmarks with representative project structures.
+
+---
 
 ### 4.7 Phase 2 Summary
 
 | Finding | Observation |
 |---------|-------------|
-| Turbopack HMR Stability | HMR latency appeared to remain below 30ms across tested project sizes |
+| Turbopack HMR Efficiency | HMR latency appeared to remain below 30ms across the two tested project sizes |
 | Speedup Factor Growth | Observed speedup increased from ~6× to ~8.5× as project complexity increased |
-| Scaling Pattern Difference | Webpack showed latency increase; Turbopack appeared relatively stable |
+| Scaling Pattern Difference | Webpack showed latency increase (+25.74%); Turbopack showed efficient scaling (−8.93%) |
+| Data Completeness | 2 of 30 Webpack runs failed due to edge cases (timeout, log format variance) |
 
 ---
 
@@ -617,8 +684,8 @@ This benchmark study (N=60 total samples) provides preliminary comparative data 
 |-----------|------------------|-----------|---------------------|
 | Cold Start (Small) | 1,285.30 ms | 569.27 ms | ~2.26× lower latency |
 | HMR (Small) | 163.27 ms | 26.43 ms | ~6.18× lower latency |
-| HMR (Medium) | 205.29 ms | 24.07 ms | ~8.53× lower latency |
-| Scaling Pattern | Linear-like increase observed | Relatively stable observed | Different behavior |
+| HMR (Medium) | 205.29 ms (N=28) | 24.07 ms (N=30) | ~8.53× lower latency |
+| Scaling Pattern | Linear-like growth observed | Sub-linear/efficient scaling observed | Different behavior |
 | Memory Usage | ~300 MB | ~215 MB | ~28% reduction |
 
 ### 5.2 Observations by Use Case
@@ -641,7 +708,147 @@ This benchmark study (N=60 total samples) provides preliminary comparative data 
 
 ### 5.4 Data Availability
 
-The benchmark data collected in this study is intended to serve as baseline reference data for future comparative studies. Complete benchmark data is preserved in `results/final_dataset_n30/` and `results/medium_project_n30/` for reproducibility and further analysis.
+The benchmark data collected in this study is intended to serve as baseline reference data for future comparative studies. Complete benchmark data is preserved in the `results/` directory for reproducibility and further analysis.
+
+---
+
+<div class="page-break"></div>
+
+## 6. Dataset Structure
+
+This dataset accompanies the benchmark study and contains all raw measurement data, analysis scripts, and generated visualizations.
+
+### 6.1 Directory Layout
+
+```
+nextjs-toolchain-benchmark/
+├── README.md                    # This document
+├── FULL_PAPER.md               # Extended technical report
+├── package.json                # Project dependencies
+├── next.config.mjs             # Next.js configuration
+│
+├── app/                        # Next.js application source
+│   ├── page.tsx               # Main page component
+│   ├── layout.tsx             # Root layout
+│   ├── globals.css            # Global styles
+│   └── components/            # Generated heavy components (50 files)
+│       ├── HeavyComponent1.tsx
+│       ├── HeavyComponent2.tsx
+│       └── ... (HeavyComponent3-50.tsx)
+│
+├── results/                    # Benchmark output data
+│   ├── SUMMARY.txt            # Aggregated statistics
+│   ├── final_dataset_n30/     # Phase 1 raw logs (Small Project)
+│   │   ├── legacy_run{1-30}_system.csv
+│   │   ├── legacy_run{1-30}_*.log
+│   │   ├── turbo_run{1-30}_system.csv
+│   │   └── turbo_run{1-30}_*.log
+│   ├── medium_project_n30/    # Phase 2 raw logs (Medium Project)
+│   │   ├── legacy_run{1-30}_*.log
+│   │   └── turbo_run{1-30}_*.log
+│   └── charts/                # Generated visualizations
+│       ├── chart1_hmr_comparison.png
+│       ├── chart2_scalability_projection.png
+│       └── chart3_summary_infographic.png
+│
+└── scripts/                    # Automation and analysis tools
+    ├── run_benchmark.sh       # Master orchestration script
+    ├── measure_start.js       # Cold start measurement
+    ├── measure_hot_reload.js  # HMR latency measurement
+    ├── monitor_system.sh      # System resource sampling
+    ├── generate_dummy.js      # Heavy component generator
+    ├── analyze_data.py        # Statistical analysis
+    └── generate_charts.py     # Visualization generation
+```
+
+### 6.2 File Descriptions
+
+| File/Directory | Description | Format |
+|----------------|-------------|--------|
+| `results/final_dataset_n30/` | Raw benchmark logs from Phase 1 (Small Project, N=30 per toolchain) | `.log`, `.csv` |
+| `results/medium_project_n30/` | Raw benchmark logs from Phase 2 (Medium Project, N=30 per toolchain) | `.log`, `.csv` |
+| `results/charts/` | Publication-ready visualizations (300 DPI) | `.png` |
+| `results/SUMMARY.txt` | Computed statistics and aggregated metrics | Plain text |
+| `scripts/*.js` | Node.js measurement instrumentation | JavaScript |
+| `scripts/*.py` | Data analysis and chart generation | Python 3 |
+| `scripts/*.sh` | Shell automation scripts | Bash/Zsh |
+
+### 6.3 Data Format
+
+**Log Files (`.log`):**
+Each log file contains timestamped output from the benchmark run, including:
+- Process start/end timestamps
+- "Ready in Xms" cold start detection
+- "Compiled in Xms" HMR detection
+- Any warnings or errors encountered
+
+**System CSV Files (`.csv`):**
+```csv
+timestamp,cpu_percent,memory_mb
+1736812345000,45.2,287.5
+1736812346000,12.8,290.1
+...
+```
+
+### 6.4 Data Integrity Notes
+
+| Condition | Expected Samples | Actual Samples | Notes |
+|-----------|------------------|----------------|-------|
+| Phase 1 - Webpack | 30 | 30 | Complete |
+| Phase 1 - Turbopack | 30 | 30 | Complete |
+| Phase 2 - Webpack | 30 | 28 | 2 runs failed (see Section 4.2.3) |
+| Phase 2 - Turbopack | 30 | 30 | Complete |
+
+---
+
+<div class="page-break"></div>
+
+## 7. License
+
+This dataset and accompanying documentation are released under a dual-license model:
+
+### 7.1 Data and Documentation
+
+**License:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
+
+You are free to:
+- **Share** — copy and redistribute the material in any medium or format
+- **Adapt** — remix, transform, and build upon the material for any purpose, even commercially
+
+Under the following terms:
+- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+
+**Applies to:** All files in `results/`, documentation files (`.md`), and generated charts.
+
+### 7.2 Source Code and Scripts
+
+**License:** [MIT License](https://opensource.org/licenses/MIT)
+
+```
+MIT License
+
+Copyright (c) 2026 Muhammad Yusuf Saputra
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+**Applies to:** All files in `scripts/`, `app/`, and configuration files.
 
 ---
 
@@ -704,5 +911,6 @@ python scripts/generate_charts.py
 
 ---
 
-*Document generated: January 13, 2026*  
-*This document is intended as technical documentation for a benchmark dataset artifact.*
+*Document Version: 2.1*  
+*Last Updated: January 14, 2026*  
+*This document serves as the primary data descriptor for the Zenodo benchmark dataset deposit.*

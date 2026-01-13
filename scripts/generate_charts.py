@@ -33,24 +33,19 @@ COLORS = {
     'annotation': '#666666'
 }
 
-# Data from benchmark results (N=30 per condition)
+# Data from benchmark results (N=30 per condition, except Medium Webpack N=28)
 DATA = {
     'small': {
         'webpack': 163.27,
-        'turbopack': 26.43
+        'turbopack': 26.43,
+        'n_webpack': 30,
+        'n_turbopack': 30
     },
     'medium': {
         'webpack': 205.29,
-        'turbopack': 24.07
-    },
-    # Projected values based on observed O(n) vs O(1) scaling
-    'large': {
-        'webpack': 320.0,    # Projected: Linear extrapolation
-        'turbopack': 25.0    # Projected: Constant time
-    },
-    'enterprise': {
-        'webpack': 700.0,    # Projected: Linear extrapolation
-        'turbopack': 25.0    # Projected: Constant time
+        'turbopack': 24.07,
+        'n_webpack': 28,  # 2 runs failed (timeout + regex mismatch)
+        'n_turbopack': 30
     }
 }
 
@@ -210,182 +205,179 @@ def generate_bar_chart():
 
 def generate_scalability_chart():
     """
-    Generate line chart showing scalability trends with O(n) vs O(1) complexity.
-    Includes projected values for Large and Enterprise scale.
+    Generate line chart showing scalability comparison between Small and Medium projects.
+    Uses only measured data (no projections).
     """
-    print("\n📈 Generating Line Chart: Scalability Projection...")
+    print("\n📈 Generating Line Chart: Scalability Comparison (Measured Data Only)...")
     
-    # Data preparation
-    project_sizes = ['Small\n(~10)', 'Medium\n(50)', 'Large*\n(200)', 'Enterprise*\n(1000+)']
-    x_positions = np.array([0, 1, 2, 3])
+    # Data preparation - MEASURED DATA ONLY
+    project_sizes = ['Small Project\n(~10 components)', 'Medium Project\n(50 components)']
+    x_positions = np.array([0, 1])
     
     webpack_values = [
         DATA['small']['webpack'],
-        DATA['medium']['webpack'],
-        DATA['large']['webpack'],
-        DATA['enterprise']['webpack']
+        DATA['medium']['webpack']
     ]
     
     turbopack_values = [
         DATA['small']['turbopack'],
-        DATA['medium']['turbopack'],
-        DATA['large']['turbopack'],
-        DATA['enterprise']['turbopack']
+        DATA['medium']['turbopack']
     ]
     
-    # Figure setup
-    fig, ax = plt.subplots(figsize=(12, 7), dpi=300)
+    # Calculate percentage changes
+    webpack_change = ((webpack_values[1] - webpack_values[0]) / webpack_values[0]) * 100
+    turbopack_change = ((turbopack_values[1] - turbopack_values[0]) / turbopack_values[0]) * 100
     
-    # Plot Webpack line (with markers for measured vs projected)
+    # Calculate speedup factors
+    speedup_small = webpack_values[0] / turbopack_values[0]
+    speedup_medium = webpack_values[1] / turbopack_values[1]
+    
+    # Figure setup
+    fig, ax = plt.subplots(figsize=(10, 7), dpi=300)
+    
+    # Plot Webpack line
     ax.plot(
-        x_positions[:2], webpack_values[:2],
+        x_positions, webpack_values,
         color=COLORS['webpack'],
         linewidth=3,
         marker='o',
-        markersize=12,
+        markersize=14,
         markerfacecolor=COLORS['webpack'],
         markeredgecolor='white',
         markeredgewidth=2,
-        label='Webpack (Measured)',
+        label='Webpack (Legacy)',
         zorder=5
     )
     
-    # Webpack projected (dashed)
+    # Plot Turbopack line
     ax.plot(
-        x_positions[1:], webpack_values[1:],
-        color=COLORS['webpack'],
-        linewidth=3,
-        linestyle='--',
-        marker='s',
-        markersize=10,
-        markerfacecolor=COLORS['webpack_light'],
-        markeredgecolor=COLORS['webpack'],
-        markeredgewidth=2,
-        label='Webpack (Projected)',
-        zorder=4
-    )
-    
-    # Plot Turbopack line (measured)
-    ax.plot(
-        x_positions[:2], turbopack_values[:2],
+        x_positions, turbopack_values,
         color=COLORS['turbopack'],
         linewidth=3,
         marker='o',
-        markersize=12,
+        markersize=14,
         markerfacecolor=COLORS['turbopack'],
         markeredgecolor='white',
         markeredgewidth=2,
-        label='Turbopack (Measured)',
+        label='Turbopack',
         zorder=5
     )
     
-    # Turbopack projected (dashed, flat line)
-    ax.plot(
-        x_positions[1:], turbopack_values[1:],
-        color=COLORS['turbopack'],
-        linewidth=3,
-        linestyle='--',
-        marker='s',
-        markersize=10,
-        markerfacecolor=COLORS['turbopack_light'],
-        markeredgecolor=COLORS['turbopack'],
-        markeredgewidth=2,
-        label='Turbopack (Projected)',
-        zorder=4
-    )
-    
-    # Add value annotations
-    for i, (wp, tp) in enumerate(zip(webpack_values, turbopack_values)):
-        # Webpack annotation
+    # Add value annotations for Webpack
+    for i, wp in enumerate(webpack_values):
         ax.annotate(
-            f'{wp:.0f} ms',
+            f'{wp:.2f} ms',
             xy=(x_positions[i], wp),
-            xytext=(10, 10),
+            xytext=(0, 15),
             textcoords='offset points',
-            fontsize=10,
+            fontsize=11,
             fontweight='bold',
             color=COLORS['webpack'],
-            ha='left'
-        )
-        
-        # Turbopack annotation
-        ax.annotate(
-            f'{tp:.0f} ms',
-            xy=(x_positions[i], tp),
-            xytext=(10, -15),
-            textcoords='offset points',
-            fontsize=10,
-            fontweight='bold',
-            color=COLORS['turbopack'],
-            ha='left'
+            ha='center'
         )
     
-    # Add complexity annotations
+    # Add value annotations for Turbopack
+    for i, tp in enumerate(turbopack_values):
+        ax.annotate(
+            f'{tp:.2f} ms',
+            xy=(x_positions[i], tp),
+            xytext=(0, -20),
+            textcoords='offset points',
+            fontsize=11,
+            fontweight='bold',
+            color=COLORS['turbopack'],
+            ha='center'
+        )
+    
+    # Add scaling behavior annotations (without O notation claims)
     ax.annotate(
-        'O(n) Linear\nScaling',
-        xy=(2.5, 500),
-        fontsize=11,
+        f'Webpack: +{webpack_change:.1f}%\n(latency increased)',
+        xy=(0.5, 185),
+        fontsize=10,
         color=COLORS['webpack'],
         ha='center',
         fontweight='bold',
-        style='italic'
+        bbox=dict(
+            boxstyle='round,pad=0.4',
+            facecolor='white',
+            edgecolor=COLORS['webpack'],
+            alpha=0.9
+        )
     )
     
     ax.annotate(
-        'O(1) Constant\nTime',
-        xy=(2.5, 60),
-        fontsize=11,
+        f'Turbopack: {turbopack_change:.1f}%\n(latency stable)',
+        xy=(0.5, 45),
+        fontsize=10,
         color=COLORS['turbopack'],
         ha='center',
         fontweight='bold',
-        style='italic'
+        bbox=dict(
+            boxstyle='round,pad=0.4',
+            facecolor='white',
+            edgecolor=COLORS['turbopack'],
+            alpha=0.9
+        )
     )
     
     # Add speedup factor annotations
-    speedup_positions = [
-        (0.5, 95, f'6.18×'),
-        (1.5, 115, f'8.53×'),
-        (2.5, 175, f'~12.8×'),
-        (3.2, 350, f'~28×')
-    ]
-    
-    for x_pos, y_pos, text in speedup_positions:
-        ax.annotate(
-            text,
-            xy=(x_pos, y_pos),
-            fontsize=9,
-            color=COLORS['annotation'],
-            ha='center',
-            bbox=dict(
-                boxstyle='round,pad=0.3',
-                facecolor='white',
-                edgecolor=COLORS['grid'],
-                alpha=0.9
-            )
+    ax.annotate(
+        f'{speedup_small:.2f}× faster',
+        xy=(0, (webpack_values[0] + turbopack_values[0]) / 2),
+        xytext=(-60, 0),
+        textcoords='offset points',
+        fontsize=10,
+        color=COLORS['annotation'],
+        ha='center',
+        va='center',
+        bbox=dict(
+            boxstyle='round,pad=0.3',
+            facecolor='#E8F5E9',
+            edgecolor=COLORS['grid'],
+            alpha=0.9
         )
+    )
+    
+    ax.annotate(
+        f'{speedup_medium:.2f}× faster',
+        xy=(1, (webpack_values[1] + turbopack_values[1]) / 2),
+        xytext=(60, 0),
+        textcoords='offset points',
+        fontsize=10,
+        color=COLORS['annotation'],
+        ha='center',
+        va='center',
+        bbox=dict(
+            boxstyle='round,pad=0.3',
+            facecolor='#E8F5E9',
+            edgecolor=COLORS['grid'],
+            alpha=0.9
+        )
+    )
     
     # Fill area between curves to emphasize the gap
     ax.fill_between(
         x_positions,
         turbopack_values,
         webpack_values,
-        alpha=0.1,
+        alpha=0.15,
         color=COLORS['turbopack'],
-        zorder=1
+        zorder=1,
+        label='Performance Gap'
     )
     
     # Styling
     apply_professional_style(
         ax,
-        'Scalability Projection: Time Complexity Analysis',
-        'Project Size (Component Count)',
+        'HMR Scalability: Measured Performance Across Project Sizes',
+        'Project Size',
         'HMR Latency (ms)'
     )
     
     ax.set_xticks(x_positions)
     ax.set_xticklabels(project_sizes)
-    ax.set_ylim(0, 800)
-    ax.set_xlim(-0.3, 3.5)
+    ax.set_ylim(0, 260)
+    ax.set_xlim(-0.4, 1.4)
     
     # Add horizontal reference line at 100ms (human perception threshold)
     ax.axhline(
@@ -398,7 +390,7 @@ def generate_scalability_chart():
     )
     ax.annotate(
         'Human Perception Threshold (~100ms)',
-        xy=(3.4, 105),
+        xy=(1.35, 105),
         fontsize=8,
         color=COLORS['annotation'],
         ha='right',
@@ -411,15 +403,14 @@ def generate_scalability_chart():
         frameon=True,
         framealpha=0.95,
         edgecolor=COLORS['grid'],
-        fontsize=9,
-        ncol=2
+        fontsize=10
     )
     legend.get_frame().set_linewidth(1.5)
     
     # Add methodology note
     fig.text(
         0.5, 0.02,
-        '* Projected values based on observed O(n) vs O(1) scaling patterns | Measured data: N=30 samples',
+        'All data points are empirically measured | Small: N=30 | Medium: Webpack N=28, Turbopack N=30',
         ha='center',
         fontsize=9,
         color=COLORS['annotation'],
@@ -486,37 +477,46 @@ def generate_summary_chart():
         ha='center'
     )
     
-    # --- Panel 2: HMR Speedup Factor Growth ---
+    # --- Panel 2: HMR Speedup Factor (Measured Only) ---
     ax2 = axes[1]
     
     speedup_data = {
-        'Small': 6.18,
-        'Medium': 8.53,
-        'Large*': 12.8,
-        'Enterprise*': 28.0
+        'Small\n(~10 comp)': 6.18,
+        'Medium\n(50 comp)': 8.53
     }
     
     bars = ax2.bar(
         list(speedup_data.keys()),
         list(speedup_data.values()),
-        color=[COLORS['turbopack'], COLORS['turbopack'], 
-               COLORS['turbopack_light'], COLORS['turbopack_light']],
+        color=[COLORS['turbopack'], COLORS['turbopack']],
         edgecolor='white',
-        linewidth=2
+        linewidth=2,
+        width=0.5
     )
     
     for bar, val in zip(bars, speedup_data.values()):
         ax2.text(
             bar.get_x() + bar.get_width()/2,
-            bar.get_height() + 0.5,
-            f'{val}×',
+            bar.get_height() + 0.3,
+            f'{val:.2f}×',
             ha='center',
-            fontsize=11,
-            fontweight='bold'
+            fontsize=12,
+            fontweight='bold',
+            color=COLORS['turbopack']
         )
     
-    ax2.set_ylim(0, 35)
-    ax2.set_title('Turbopack Speedup Factor', fontsize=12, fontweight='bold', pad=15)
+    # Add growth annotation
+    ax2.annotate(
+        '+38% speedup\nincrease',
+        xy=(0.5, 7.5),
+        fontsize=9,
+        ha='center',
+        color=COLORS['annotation'],
+        style='italic'
+    )
+    
+    ax2.set_ylim(0, 12)
+    ax2.set_title('Turbopack Speedup Factor\n(Measured)', fontsize=12, fontweight='bold', pad=15)
     ax2.set_ylabel('Speedup (×)', fontsize=10)
     
     # --- Panel 3: Key Metrics Summary ---
@@ -530,20 +530,22 @@ def generate_summary_chart():
     🚀 Cold Start
        2.26× faster
        
-    ⚡ HMR (Small)
+    ⚡ HMR (Small Project)
        6.18× faster
        
-    📈 HMR (Medium)
+    📈 HMR (Medium Project)
        8.53× faster
        
-    🏢 Projected (Enterprise)
-       ~28× faster
+    📊 Speedup Growth
+       +38% (Small → Medium)
        
     ════════════════════════
     
     Platform: Apple M1
     Framework: Next.js 14
-    Sample Size: N=30
+    Sample Size: N=30 (N=28*)
+    
+    * 2 Webpack runs failed
     """
     
     ax3.text(
