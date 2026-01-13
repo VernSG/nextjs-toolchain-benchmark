@@ -1,4 +1,4 @@
-# Next.js Toolchain Benchmark: Webpack vs Turbopack (Apple Silicon)
+# Performance Analysis of Next.js Development Toolchains on Apple Silicon (ARM64)
 
 ![Next.js 14](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
 ![Apple Silicon](https://img.shields.io/badge/Platform-Apple%20M1-999999?style=flat-square&logo=apple)

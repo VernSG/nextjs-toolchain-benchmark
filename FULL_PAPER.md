@@ -1,5 +1,4 @@
-# Performance Analysis of Next.js Toolchains on Apple Silicon (ARM64)
-
+# Performance Analysis of Next.js Development Toolchains on Apple Silicon (ARM64)
 **Author:** Muhammad Yusuf Saputra  
 **Affiliation:** Department of Informatics Engineering, STITEK Bontang  
 **Location:** Bontang, Indonesia  
