@@ -5,96 +5,96 @@
 ![Samples](https://img.shields.io/badge/Samples-N%3D60-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-> **A rigorous, statistically-validated benchmark comparing Legacy Webpack and Turbopack performance in Next.js development workflows.**
+> **A benchmark dataset comparing Legacy Webpack and Turbopack performance in Next.js development workflows.**
 
 ---
 
-## 📋 Executive Summary
+## Overview
 
-This repository contains the results of a comprehensive benchmark study evaluating the performance characteristics of two Next.js development toolchains: **Legacy Webpack** and **Turbopack**.
+This repository contains the results of a benchmark study evaluating the performance characteristics of two Next.js development toolchains: **Legacy Webpack** and **Turbopack**.
 
-### The Big Picture
+### Summary of Observations
 
-Turbopack isn't just faster at the start—**it gets proportionally faster as your project grows**.
+The following performance patterns were observed in the tested configurations:
 
-| Metric | Small Project | Medium Project | Trend |
-|--------|---------------|----------------|-------|
-| **Turbopack Speedup** | 6.18× | 8.53× | 📈 **+38% improvement** |
-| **Webpack HMR** | 163 ms | 205 ms | 📉 Degrades linearly |
-| **Turbopack HMR** | 26 ms | 24 ms | ✅ Stays constant |
+| Metric | Small Project | Medium Project | Observed Trend |
+|--------|---------------|----------------|----------------|
+| **Turbopack Speedup** | ~6.18× | ~8.53× | Increased with project size |
+| **Webpack HMR** | 163 ms | 205 ms | Increased latency (+25.74%) |
+| **Turbopack HMR** | 26 ms | 24 ms | Remained relatively stable |
 
-**Key Discovery:** While Webpack exhibits **linear performance degradation** as project complexity increases (+25.74% slower), Turbopack demonstrates **near-constant time complexity**—and actually performed *slightly better* on the larger project due to improved cache warming.
+**Observation:** In this test configuration, Webpack HMR latency increased as project complexity grew (+25.74%), while Turbopack HMR latency remained relatively constant—and was slightly lower on the larger project, possibly due to cache warming effects.
 
-This finding has profound implications for enterprise-scale applications where Turbopack's advantage could exceed **25-30× speedup**.
+*Note: These are observations from specific test configurations and may not generalize to all project types or environments.*
 
 ---
 
-## 🧪 The Experiments (Overview)
+## Experiments Overview
 
-We conducted a **two-phase benchmark study** with a total of **N=60 samples** (30 per toolchain, per phase) to validate both baseline performance and scalability characteristics.
+Two benchmark phases were conducted with a total of **N=60 samples** (30 per toolchain, per phase).
 
 ### Phase 1: Small Project Baseline
 
 **Objective:** Establish baseline performance metrics on a minimal Next.js application.
 
 | Metric | Legacy (Webpack) | Turbopack | Speedup |
-|--------|------------------|-----------|---------|
-| Cold Start (Mean) | 1,285.30 ms | 569.27 ms | **2.26×** |
-| HMR (Mean) | 163.27 ms | 26.43 ms | **6.18×** |
+|--------|------------------|-----------|--------|
+| Cold Start (Mean) | 1,285.30 ms | 569.27 ms | ~2.26× |
+| HMR (Mean) | 163.27 ms | 26.43 ms | ~6.18× |
 
-📄 **Full Report:** [REPORT_SMALL_PROJECT.md](REPORT_SMALL_PROJECT.md)
+Full Report: [REPORT_SMALL_PROJECT.md](REPORT_SMALL_PROJECT.md)
 
 ---
 
 ### Phase 2: Medium Project (50 Heavy Components)
 
-**Objective:** Evaluate how each toolchain scales with increased project complexity.
+**Objective:** Evaluate how each toolchain performs with increased project complexity.
 
 | Metric | Legacy (Webpack) | Turbopack | Speedup |
-|--------|------------------|-----------|---------|
-| HMR (Mean) | 205.29 ms | 24.07 ms | **8.53×** |
+|--------|------------------|-----------|--------|
+| HMR (Mean) | 205.29 ms | 24.07 ms | ~8.53× |
 | Sample Size | N=28* | N=30 | — |
 
 *\* Two Legacy runs did not complete HMR detection*
 
-📄 **Full Report:** [SCALABILITY_REPORT.md](SCALABILITY_REPORT.md)
+Full Report: [SCALABILITY_REPORT.md](SCALABILITY_REPORT.md)
 
 ---
 
-## 🔑 Key Insight: Scalability Analysis
+## Scalability Observations
 
 ### Side-by-Side Comparison
 
 | Metric | Small Project | Medium Project | Delta |
 |--------|---------------|----------------|-------|
-| **Webpack HMR** | 163.27 ms | 205.29 ms | **+25.74%** ❌ |
-| **Turbopack HMR** | 26.43 ms | 24.07 ms | **-8.93%** ✅ |
-| **Speedup Factor** | 6.18× | 8.53× | **+38.03%** 🚀 |
+| **Webpack HMR** | 163.27 ms | 205.29 ms | +25.74% |
+| **Turbopack HMR** | 26.43 ms | 24.07 ms | -8.93% |
+| **Speedup Factor** | ~6.18× | ~8.53× | +38.03% |
 
 ### Visual Analysis
 
 ![HMR Latency Comparison](./results/charts/chart1_hmr_comparison.png)
-*Figure 1: Comparison of HMR latency across project sizes. Webpack suffers from significant slowdown (+25%) while Turbopack remains stable.*
+*Figure 1: Comparison of HMR latency across project sizes.*
 
 ### Performance Scaling Projection
 
-Based on observed data, we can project performance at larger scales:
+Based on observed data, projected performance at larger scales (note: these are extrapolations, not measured values):
 
 ![Scalability Trend](./results/charts/chart2_scalability_projection.png)
-*Figure 2: Scalability projection showing Webpack's Linear O(n) degradation vs Turbopack's Constant O(1) stability.*
+*Figure 2: Scalability projection based on observed scaling patterns.*
 
 | Project Size | Components | Webpack HMR | Turbopack HMR | Speedup |
 |--------------|------------|-------------|---------------|---------|
-| Small | ~10 | 163 ms | 26 ms | 6.18× |
-| Medium | 50 | 205 ms | 24 ms | 8.53× |
-| Large | 200 | ~320 ms* | ~25 ms* | **~12.8×** |
-| Enterprise | 1000+ | ~700+ ms* | ~25 ms* | **~28×+** |
+| Small | ~10 | 163 ms | 26 ms | ~6.18× |
+| Medium | 50 | 205 ms | 24 ms | ~8.53× |
+| Large* | 200 | ~320 ms | ~25 ms | ~12.8× |
+| Enterprise* | 1000+ | ~700+ ms | ~25 ms | ~28×+ |
 
-*\* Projected values based on observed scaling patterns*
+*\* Projected values based on observed scaling patterns. Actual performance may vary.*
 
 ---
 
-## 🔧 How to Reproduce
+## How to Reproduce
 
 ### Prerequisites
 
@@ -129,7 +129,7 @@ Based on observed data, we can project performance at larger scales:
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 .
@@ -148,9 +148,9 @@ Based on observed data, we can project performance at larger scales:
 
 ---
 
-## 📊 Methodology
+## Methodology
 
-For detailed methodology including statistical analysis techniques, measurement protocols, and environment specifications, see:
+For methodology details including measurement protocols and environment specifications, see:
 
 - [methodology.md](methodology.md)
 - [FINAL_REPORT.md](FINAL_REPORT.md)
@@ -158,20 +158,20 @@ For detailed methodology including statistical analysis techniques, measurement 
 
 ---
 
-## 🏁 Conclusion
+## Summary
 
-The data unequivocally demonstrates that **Turbopack is architecturally superior for scalable development workflows**:
+Based on the benchmark data collected in this study:
 
-| Finding | Implication |
-|---------|-------------|
-| 🚀 **Zero Overhead Scaling** | Turbopack maintains sub-30ms HMR regardless of codebase size |
-| 📈 **Compounding Advantage** | Speedup factor grows from 6× to 8.5× to potentially 28×+ |
-| ⚡ **Developer Experience** | At 24ms HMR, changes appear instantaneous (below 100ms perception threshold) |
+| Observation | Description |
+|-------------|-------------|
+| HMR Stability | Turbopack HMR latency remained below 30ms across tested project sizes |
+| Scaling Pattern | Webpack HMR latency increased with project complexity; Turbopack remained relatively stable |
+| Speedup Growth | Observed speedup factor increased from ~6× to ~8.5× as project size increased |
 
-**Recommendation:** For any Next.js project expected to grow beyond a handful of components, adopting Turbopack is not just an optimization—it's a strategic investment in developer productivity.
+**Note:** These observations are specific to the tested environment (Apple M1, Next.js 14.2.35, synthetic component generation) and may not represent all real-world scenarios.
 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ on Apple Silicon | Data-driven decisions for modern web development</sub>
+  <sub>Benchmark dataset artifact | Apple Silicon</sub>
 </p>

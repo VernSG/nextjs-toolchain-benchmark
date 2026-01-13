@@ -8,23 +8,23 @@
 
 ## 1. Research Objective
 
-This study aims to rigorously compare the performance characteristics of two Next.js development toolchains:
+This study aims to compare the performance characteristics of two Next.js development toolchains:
 
 1. **Legacy Toolchain:** JavaScript-based Webpack bundler (`next dev`)
 2. **Modern Toolchain:** Rust-based Turbopack bundler (`next dev --turbo`)
 
-The investigation encompasses two distinct analytical dimensions:
+The investigation encompasses two analytical dimensions:
 
 | Dimension | Research Question |
 |-----------|-------------------|
-| **Raw Performance** | What are the baseline performance differentials between toolchains on a minimal project? |
-| **Scalability** | How does each toolchain's performance degrade (or maintain) as project complexity increases? |
+| **Raw Performance** | What are the baseline performance differentials between toolchains on a minimal project in this environment? |
+| **Scalability** | How does each toolchain's performance change as project complexity increases in the tested configuration? |
 
 ---
 
 ## 2. Experimental Environment
 
-All benchmark executions were conducted within a controlled, consistent hardware and software environment to ensure measurement validity and reproducibility.
+All benchmark executions were conducted within a controlled hardware and software environment to support measurement consistency.
 
 ### 2.1 Hardware Specifications
 
@@ -71,12 +71,13 @@ All benchmark executions were conducted within a controlled, consistent hardware
 
 ### 3.3 Controlled Variables
 
-To minimize confounding effects, the following variables were held constant:
-
-- Ambient system temperature (room-temperature operation)
-- Background process load (minimal concurrent applications)
-- Network conditions (localhost-only communication)
-- File system state (clean `.next` cache for cold start measurements)
+| Variable | Control Method |
+|----------|----------------|
+| Hardware Platform | Single device used for all measurements |
+| Ambient Temperature | Indoor environment, nominally stable conditions |
+| Background Processes | Minimized concurrent application load |
+| Network State | Offline mode to eliminate external dependencies |
+| File System State | `.next` cache cleared before cold start measurements |
 
 ---
 
@@ -86,7 +87,7 @@ The experimental design comprises two sequential phases, each addressing a disti
 
 ### 4.1 Phase 1: Baseline Performance (Small Project)
 
-**Objective:** Establish baseline performance metrics using a minimal Next.js application to quantify the inherent performance differential between toolchains.
+**Objective:** Establish baseline performance metrics using a minimal Next.js application to quantify the performance differential between toolchains in this configuration.
 
 **Project Characteristics:**
 
@@ -104,7 +105,7 @@ The experimental design comprises two sequential phases, each addressing a disti
 
 ### 4.2 Phase 2: Scalability Analysis (Medium Project)
 
-**Objective:** Evaluate how each toolchain's HMR performance scales under increased project complexity, specifically testing the hypothesis that Turbopack exhibits O(1) constant-time behavior while Webpack exhibits O(n) linear scaling.
+**Objective:** Evaluate how each toolchain's HMR performance changes under increased project complexity, testing whether Turbopack exhibits different scaling behavior compared to Webpack in this configuration.
 
 **Project Transformation:**
 
@@ -150,7 +151,7 @@ for (i = 1; i <= 50; i++) {
 
 ## 5. Measurement Protocol
 
-All measurements were automated using a custom instrumentation suite to eliminate human-induced timing variance and ensure reproducibility.
+All measurements were automated using a custom instrumentation suite to reduce human-induced timing variance and support reproducibility.
 
 ### 5.1 Automation Infrastructure
 
@@ -230,10 +231,10 @@ Without the HTTP fetch step, HMR measurements would include initial compilation 
 
 ### 5.4 Sample Size Determination
 
-| Parameter | Value | Justification |
-|-----------|-------|---------------|
-| **Sample Size (N)** | 30 runs per condition | Sufficient for Central Limit Theorem applicability; enables parametric statistical analysis |
-| **Total Measurements** | 120 HMR samples (2 toolchains × 2 project sizes × 30 runs) | Provides statistical power for detecting effect sizes >0.5σ |
+| Parameter | Value | Rationale |
+|-----------|-------|-----------|
+| **Sample Size (N)** | 30 runs per condition | Selected to support Central Limit Theorem applicability; enables parametric statistical analysis |
+| **Total Measurements** | 120 HMR samples (2 toolchains x 2 project sizes x 30 runs) | Provides statistical power for detecting moderate effect sizes |
 | **Pilot Study** | N=5 (preliminary) | Validated instrumentation accuracy and identified measurement artifacts |
 
 ### 5.5 Inter-Trial Controls
@@ -357,4 +358,4 @@ To replicate this study:
 
 ---
 
-*Methodology document prepared in accordance with empirical software engineering research standards.*
+*Methodology document prepared as technical documentation for a benchmark dataset artifact.*

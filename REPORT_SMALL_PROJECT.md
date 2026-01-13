@@ -1,4 +1,4 @@
-# Comprehensive Performance Analysis: Next.js Toolchains on Apple Silicon (N=30)
+# Performance Analysis: Next.js Toolchains on Apple Silicon (N=30)
 
 **Document Version:** 1.0  
 **Date:** January 13, 2026  
@@ -8,20 +8,20 @@
 
 ---
 
-## 1. Executive Summary
+## 1. Overview
 
-This report presents the findings of a **large-scale benchmark study (N=30)** comparing the performance characteristics of two Next.js development toolchains: the legacy Webpack-based bundler and the next-generation Turbopack bundler, both evaluated on Apple Silicon architecture.
+This report presents the findings of a **benchmark study (N=30)** comparing the performance characteristics of two Next.js development toolchains: the legacy Webpack-based bundler and the Turbopack bundler, both evaluated on Apple Silicon architecture.
 
-### Key Findings
+### Summary of Observations
 
 | Metric | Legacy (Webpack) | Turbopack | Speedup Factor |
 |--------|------------------|-----------|----------------|
-| Cold Start (Mean) | 1,285.30 ms | 569.27 ms | **2.26×** |
-| Hot Module Replacement (Mean) | 163.27 ms | 26.43 ms | **6.18×** |
+| Cold Start (Mean) | 1,285.30 ms | 569.27 ms | ~2.26× |
+| Hot Module Replacement (Mean) | 163.27 ms | 26.43 ms | ~6.18× |
 
-The most significant performance differential was observed in **Hot Module Replacement (HMR)**, where Turbopack demonstrated a **6.18× speedup** over the legacy Webpack toolchain. This improvement directly translates to enhanced developer productivity, as HMR is the most frequently executed operation during iterative development workflows.
+The most notable performance difference was observed in **Hot Module Replacement (HMR)**, where Turbopack showed a **~6.18× speedup** over the legacy Webpack toolchain in this test configuration.
 
-Additionally, Turbopack exhibited superior consistency across all metrics, with a coefficient of variation (CV) of 2.15% for Cold Start operations compared to 5.52% for the legacy toolchain. This lower variance indicates more predictable and reliable performance characteristics.
+Additionally, Turbopack exhibited lower variance in cold start metrics, with a coefficient of variation (CV) of 2.15% compared to 5.52% for the legacy toolchain.
 
 ---
 
@@ -29,11 +29,11 @@ Additionally, Turbopack exhibited superior consistency across all metrics, with 
 
 ### 2.1 Experimental Design
 
-This study employed a rigorous, automated benchmarking methodology to ensure reproducibility and statistical validity:
+This study employed an automated benchmarking methodology:
 
-1. **Automated Instrumentation:** Custom shell scripts and Node.js-based measurement utilities were developed to eliminate human-induced variance in timing measurements.
+1. **Automated Instrumentation:** Custom shell scripts and Node.js-based measurement utilities were developed to reduce human-induced variance in timing measurements.
 
-2. **Phased Approach:** A pilot study (N=5) was initially conducted to validate the measurement tools, calibrate timing thresholds, and identify potential confounding variables. Following successful validation, this main experiment (N=30) was executed to achieve statistical significance.
+2. **Phased Approach:** A pilot study (N=5) was conducted to validate the measurement tools and calibrate timing thresholds. Following validation, this main experiment (N=30) was executed.
 
 3. **Isolation Protocol:** Each benchmark run was executed with:
    - Clean process termination between runs
@@ -73,7 +73,7 @@ The following statistical measures were computed for each metric category:
 | **Range** | 1,196 – 1,511 ms | 563 – 622 ms | — |
 | **CV** | 5.52% | 2.15% | -3.37% |
 
-**Analysis:** Turbopack achieves a **2.26× improvement** in cold start performance. The substantially lower standard deviation (12.27 ms vs. 70.90 ms) indicates that Turbopack provides more consistent startup times. The P95 values are particularly noteworthy: even in worst-case scenarios, Turbopack (589 ms) outperforms the legacy toolchain's average performance (1,285 ms).
+**Analysis:** Turbopack shows a **~2.26× improvement** in cold start performance in this test. The lower standard deviation (12.27 ms vs. 70.90 ms) indicates more consistent startup times. The P95 value for Turbopack (589 ms) was lower than the legacy toolchain's mean (1,285 ms).
 
 ### 3.2 Hot Module Replacement (HMR) Performance
 
@@ -86,51 +86,44 @@ The following statistical measures were computed for each metric category:
 | **Range** | 149 – 177 ms | 25 – 41 ms | — |
 | **CV** | 3.42% | 10.82% | +7.40% |
 
-**Analysis:** Turbopack demonstrates a remarkable **6.18× improvement** in HMR performance. The mean HMR latency of 26.43 ms approaches the threshold of human-imperceptible delay (~100 ms), enabling a near-instantaneous feedback loop during development. 
+**Analysis:** Turbopack shows a **~6.18× improvement** in HMR performance. The mean HMR latency of 26.43 ms is below the commonly cited human perception threshold (~100 ms).
 
-While Turbopack exhibits a higher coefficient of variation (10.82% vs. 3.42%), this is attributable to the compressed measurement scale—a 2.86 ms standard deviation on a 26.43 ms mean appears proportionally larger than a 5.58 ms deviation on a 163.27 ms mean, despite representing a smaller absolute variance.
+The higher coefficient of variation for Turbopack (10.82% vs. 3.42%) is attributable to the compressed measurement scale—a 2.86 ms standard deviation on a 26.43 ms mean appears proportionally larger than a 5.58 ms deviation on a 163.27 ms mean, despite representing a smaller absolute variance.
 
 ### 3.3 Speedup Factor Summary
 
-| Metric | Speedup Factor | Interpretation |
-|--------|----------------|----------------|
-| Cold Start | **2.26×** | Development server initializes 2.26 times faster |
-| HMR | **6.18×** | Code changes reflect 6.18 times faster |
+| Metric | Speedup Factor | Description |
+|--------|----------------|-------------|
+| Cold Start | ~2.26× | Development server initialized faster in this test |
+| HMR | ~6.18× | Code changes reflected faster in this test |
 
 ---
 
 ## 4. Resource Efficiency
 
-Beyond temporal performance metrics, resource utilization represents a critical dimension of toolchain efficiency, particularly for developers operating on battery-powered devices or resource-constrained environments.
+Resource utilization data was also collected during the benchmark runs.
 
 ### 4.1 Memory Consumption
 
-| Toolchain | Peak Memory Allocation | Efficiency Gain |
-|-----------|------------------------|-----------------|
+| Toolchain | Peak Memory Allocation | Difference |
+|-----------|------------------------|------------|
 | Legacy (Webpack) | ~300 MB RAM | Baseline |
-| Turbopack | ~215 MB RAM | **28.3% reduction** |
+| Turbopack | ~215 MB RAM | ~28.3% lower |
 
-Turbopack's reduced memory footprint can be attributed to its Rust-based architecture, which enables more efficient memory management compared to the JavaScript-based Webpack bundler. This reduction translates to:
-- Improved system responsiveness during development
-- Extended battery life on portable devices
-- Greater headroom for concurrent development tools
+Turbopack's reduced memory footprint may be related to its Rust-based architecture.
 
 ### 4.2 CPU Utilization Patterns
 
-| Toolchain | CPU Behavior | Thermal Impact |
-|-----------|--------------|----------------|
-| Legacy (Webpack) | Sustained high CPU usage | Elevated thermal output |
-| Turbopack | Efficient burst processing | Minimal thermal impact |
+| Toolchain | Observed CPU Behavior |
+|-----------|------------------------|
+| Legacy (Webpack) | Sustained CPU usage observed during compilation |
+| Turbopack | Burst processing pattern observed |
 
-The legacy Webpack toolchain exhibits prolonged periods of high CPU utilization, particularly during initial compilation and large file changes. In contrast, Turbopack leverages optimized, parallel processing through Rust's native concurrency primitives, resulting in brief CPU bursts followed by rapid return to idle state.
+The legacy Webpack toolchain exhibited prolonged periods of CPU utilization during initial compilation. Turbopack showed brief CPU bursts followed by return to lower usage.
 
-### 4.3 Efficiency Implications
+### 4.3 Efficiency Notes
 
-The combined improvements in memory and CPU efficiency yield several practical benefits:
-
-1. **Sustainable Development Sessions:** Reduced thermal output minimizes CPU throttling during extended development sessions
-2. **Battery Conservation:** Lower average power draw extends mobile development capabilities
-3. **Multi-tasking Capacity:** Freed system resources accommodate additional development tools (IDEs, browsers, containers)
+The observed differences in memory and CPU patterns may have practical implications for development workflows on resource-constrained systems.
 
 ---
 
@@ -159,19 +152,14 @@ Based on the empirical evidence presented in this analysis, the following recomm
    - The transition requires validation of custom Webpack configurations
    - Feature parity with Webpack continues to expand with each Next.js release
 
-3. **For Resource-Constrained Environments:** Turbopack's 28.3% memory reduction and efficient CPU utilization patterns make it particularly suitable for development on portable devices or within containerized environments.
-
-### 5.3 Limitations and Future Work
+### 5.3 Limitations
 
 - This study focused on a single Next.js project structure; performance characteristics may vary with project complexity
 - Long-term stability metrics (multi-hour sessions) were not evaluated
 - Production build performance was outside the scope of this development-focused analysis
-
-### 5.4 Final Verdict
-
-The data unequivocally supports **Turbopack as the superior toolchain** for Next.js development on Apple Silicon. The **6.18× improvement in HMR latency** alone justifies adoption, as it fundamentally transforms the development experience from perceptibly delayed to effectively instantaneous.
+- Results are specific to the tested hardware and software environment
 
 ---
 
 **Appendix: Raw Data Location**  
-Complete benchmark data is preserved in `results/final_dataset_n30/` for reproducibility and further analysis.
+Benchmark data is available in `results/final_dataset_n30/` for reference.
